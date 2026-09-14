@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -14,6 +15,7 @@ namespace osu.Game.Screens.Menu
     public partial class ButtonSystem
     {
         private Container? legacyMenuRoot;
+        private readonly List<LegacyMainMenuButton> legacyMenuButtons = new List<LegacyMainMenuButton>();
 
         protected override void LoadComplete()
         {
@@ -129,15 +131,13 @@ namespace osu.Game.Screens.Menu
                 VisibleState = visibleState,
             };
 
+            legacyMenuButtons.Add(button);
             return button;
         }
 
         private void updateLegacyMenuState(ButtonSystemState newState)
         {
-            if (legacyMenuRoot == null)
-                return;
-
-            foreach (var button in legacyMenuRoot.ChildrenOfType<LegacyMainMenuButton>())
+            foreach (var button in legacyMenuButtons)
                 button.ButtonSystemState = newState;
         }
     }
