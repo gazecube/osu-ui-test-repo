@@ -29,7 +29,6 @@ namespace osu.Game.Screens.Menu
 
         private readonly Action action;
         private readonly Key[] triggerKeys;
-        private readonly Box background;
         private readonly Box accent;
         private readonly Box hover;
         private readonly OsuSpriteText label;
@@ -72,7 +71,7 @@ namespace osu.Game.Screens.Menu
 
             InternalChildren = new Drawable[]
             {
-                background = new Box
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = new Color4(24, 24, 30, 235),
@@ -95,7 +94,6 @@ namespace osu.Game.Screens.Menu
                     Origin = Anchor.CentreLeft,
                     Position = new Vector2(22, 0),
                     Text = text,
-                    Font = OsuFont.GetFont(size: 20, weight: FontWeight.Regular),
                     Shadow = true,
                 },
             };
