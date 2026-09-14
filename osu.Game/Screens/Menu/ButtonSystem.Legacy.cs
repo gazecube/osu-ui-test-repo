@@ -76,10 +76,10 @@ namespace osu.Game.Screens.Menu
                 ButtonSystemState.Play, () => buttonsPlay[1].TriggerClick(), Key.M));
             flow.Add(createLegacyButton("PLAYLISTS", OsuIcon.Tournament, new Color4(94, 63, 186, 255),
                 ButtonSystemState.Play, () => buttonsPlay[2].TriggerClick(), Key.L));
-            flow.Add(createLegacyButton("DAILY CHALLENGE", FontAwesome.Solid.CalendarDay, new Color4(94, 63, 186, 255),
+            flow.Add(createLegacyButton("DAILY CHALLENGE", FontAwesome.Solid.Bolt, new Color4(94, 63, 186, 255),
                 ButtonSystemState.Play, () => buttonsPlay[3].TriggerClick(), Key.D));
             flow.Add(createLegacyButton("BACK", OsuIcon.PrevCircle, new Color4(51, 58, 94, 255),
-                ButtonSystemState.Play, goBack));
+                ButtonSystemState.Play, () => goBack()));
 
             return flow;
         }
@@ -93,7 +93,7 @@ namespace osu.Game.Screens.Menu
             flow.Add(createLegacyButton("RANKED PLAY", FontAwesome.Solid.Crown, new Color4(94, 63, 186, 255),
                 ButtonSystemState.Multi, () => buttonsMulti[1].TriggerClick(), Key.R));
             flow.Add(createLegacyButton("BACK", OsuIcon.PrevCircle, new Color4(51, 58, 94, 255),
-                ButtonSystemState.Multi, goBack));
+                ButtonSystemState.Multi, () => goBack()));
 
             return flow;
         }
@@ -107,7 +107,7 @@ namespace osu.Game.Screens.Menu
             flow.Add(createLegacyButton("SKIN EDITOR", OsuIcon.SkinB, new Color4(220, 160, 0, 255),
                 ButtonSystemState.Edit, () => buttonsEdit[1].TriggerClick(), Key.S));
             flow.Add(createLegacyButton("BACK", OsuIcon.PrevCircle, new Color4(51, 58, 94, 255),
-                ButtonSystemState.Edit, goBack));
+                ButtonSystemState.Edit, () => goBack()));
 
             return flow;
         }
