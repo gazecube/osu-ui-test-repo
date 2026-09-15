@@ -100,7 +100,7 @@ namespace osu.Game.Screens.Menu
             }
 
             addLegacyButton("BACK", new Color4(110, 110, 125, 255), new Vector2(-132, 50),
-                ButtonSystemState.Play, goBack, Key.B, Key.Escape);
+                ButtonSystemState.Play, () => goBack(), Key.B, Key.Escape);
         }
 
         private void createModernFallbackMenus()
@@ -113,14 +113,14 @@ namespace osu.Game.Screens.Menu
             addLegacyButton("RANKED PLAY", new Color4(126, 87, 194, 255), new Vector2(-102, -80),
                 ButtonSystemState.Multi, () => buttonsMulti[1].TriggerClick(), Key.R);
             addLegacyButton("BACK", new Color4(110, 110, 125, 255), new Vector2(-132, 50),
-                ButtonSystemState.Multi, goBack, Key.B, Key.Escape);
+                ButtonSystemState.Multi, () => goBack(), Key.B, Key.Escape);
 
             addLegacyButton("BEATMAP EDITOR", new Color4(255, 183, 77, 255), new Vector2(-122, -145),
                 ButtonSystemState.Edit, () => buttonsEdit[0].TriggerClick(), Key.B, Key.E);
             addLegacyButton("SKIN EDITOR", new Color4(255, 167, 38, 255), new Vector2(-102, -80),
                 ButtonSystemState.Edit, () => buttonsEdit[1].TriggerClick(), Key.S);
             addLegacyButton("BACK", new Color4(110, 110, 125, 255), new Vector2(-132, 50),
-                ButtonSystemState.Edit, goBack, Key.Escape);
+                ButtonSystemState.Edit, () => goBack(), Key.Escape);
         }
 
         private void addLegacyButton(string text, Color4 colour, Vector2 position,
