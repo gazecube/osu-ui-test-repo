@@ -14,24 +14,22 @@ using osuTK.Input;
 namespace osu.Game.Screens.Menu
 {
     /// <summary>
-    /// Presentation-only main-menu button modelled after the stable-era vertical menu.
-    ///
-    /// This intentionally does not derive from <see cref="MainMenuButton"/>. The latter
-    /// carries lazer-specific wedge geometry, icons and beat-synchronised hover effects.
-    /// Keeping this drawable independent lets the stable presentation evolve without
-    /// disturbing the modern <see cref="ButtonSystem"/> which remains the routing/state
-    /// engine underneath it.
+    /// Stable-era main-menu button presentation using the geometry and transition
+    /// timings from the 2011 client. The temporary vector presentation can be
+    /// replaced by the original menu-button-* textures without changing layout or
+    /// interaction behaviour.
     /// </summary>
     public partial class LegacyMainMenuButton : CompositeDrawable
     {
-        private const float button_width = 235;
-        private const float button_height = 44;
+        // 2011 menu-button PNGs are 583x100 and are authored for the 1024x768
+        // sprite field. Stable displays them at 5/8 scale in its 640x480 field.
+        private const float button_width = 583f * 5f / 8f;
+        private const float button_height = 100f * 5f / 8f;
 
         private readonly Action action;
         private readonly Key[] triggerKeys;
-        private readonly Box accent;
+        private readonly Vector2 basePosition;
         private readonly Box hover;
-        private readonly OsuSpriteText label;
 
         private ButtonSystemState visibleState;
         private ButtonSystemState buttonSystemState = ButtonSystemState.Initial;
@@ -59,14 +57,16 @@ namespace osu.Game.Screens.Menu
             }
         }
 
-        public LegacyMainMenuButton(string text, Color4 colour, Action action, params Key[] triggerKeys)
+        public LegacyMainMenuButton(string text, Color4 colour, Vector2 basePosition, Action action, params Key[] triggerKeys)
         {
             this.action = action;
             this.triggerKeys = triggerKeys;
+            this.basePosition = basePosition;
 
+            Anchor = Anchor.Centre;
+            Origin = Anchor.TopLeft;
+            Position = basePosition;
             Size = new Vector2(button_width, button_height);
-            Masking = true;
-            CornerRadius = 2;
             Alpha = 0;
 
             InternalChildren = new Drawable[]
@@ -74,9 +74,9 @@ namespace osu.Game.Screens.Menu
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(24, 24, 30, 235),
+                    Colour = new Color4(20, 20, 26, 225),
                 },
-                accent = new Box
+                new Box
                 {
                     RelativeSizeAxes = Axes.Y,
                     Width = 6,
@@ -88,7 +88,7 @@ namespace osu.Game.Screens.Menu
                     Colour = Color4.White,
                     Alpha = 0,
                 },
-                label = new OsuSpriteText
+                new OsuSpriteText
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
@@ -104,19 +104,21 @@ namespace osu.Game.Screens.Menu
             if (buttonSystemState != visibleState)
                 return false;
 
-            hover.FadeTo(0.12f, 80);
-            accent.ResizeWidthTo(11, 100, Easing.OutQuint);
-            label.MoveToX(28, 100, Easing.OutQuint);
-            this.ScaleTo(1.025f, 100, Easing.OutQuint);
+            // Stable overshoots to +30 over 140 ms, then settles to +20 over the
+            // following 140 ms. The separate -over image fades in at the same time.
+            this.MoveToX(basePosition.X + 30, 140, Easing.InQuad)
+                .Then()
+                .MoveToX(basePosition.X + 20, 140, Easing.OutQuad);
+            hover.FadeTo(0.16f, 150);
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            hover.FadeOut(120);
-            accent.ResizeWidthTo(6, 120, Easing.OutQuint);
-            label.MoveToX(22, 120, Easing.OutQuint);
-            this.ScaleTo(1, 120, Easing.OutQuint);
+            // 2011 stable returns the base sprite more slowly than it enters and
+            // lets the hover overlay linger while fading away.
+            this.MoveToX(basePosition.X, 400, Easing.OutQuad);
+            hover.FadeOut(300);
         }
 
         protected override bool OnClick(ClickEvent e)
@@ -150,34 +152,38 @@ namespace osu.Game.Screens.Menu
         private void flash()
         {
             hover.ClearTransforms();
-            hover.Alpha = 0.35f;
-            hover.FadeOut(250, Easing.OutQuint);
+            hover.Alpha = 0.3f;
+            hover.FadeOut(300, Easing.OutQuad);
         }
 
         private void updateVisibility(bool instant)
         {
             ClearTransforms();
+            hover.ClearTransforms();
+            hover.Alpha = 0;
 
             bool visible = buttonSystemState == visibleState;
 
             if (instant)
             {
+                Position = basePosition;
                 Alpha = visible ? 1 : 0;
-                X = visible ? 0 : 30;
                 return;
             }
 
             if (visible)
             {
-                X = 30;
+                // ChangeTier() restores the authored position immediately and fades
+                // the incoming tier over 300 ms.
+                Position = basePosition;
                 Alpha = 0;
-                this.MoveToX(0, 220, Easing.OutQuint);
-                this.FadeIn(120);
+                this.FadeIn(300);
             }
             else
             {
-                this.MoveToX(-18, 130, Easing.InQuad);
-                this.FadeOut(90);
+                // Outgoing tier slides 50 logical pixels left while fading for 400 ms.
+                this.MoveToX(basePosition.X - 50, 400, Easing.InQuad);
+                this.FadeOut(400, Easing.InQuad);
             }
         }
 
